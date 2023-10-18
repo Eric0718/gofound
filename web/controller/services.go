@@ -21,3 +21,7 @@ func NewServices() {
 		Word:     service2.NewWord(),
 	}
 }
+
+func GetSrv() *Services {
+	return srv
+}

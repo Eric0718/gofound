@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/sea-team/gofound/core"
+	_ "github.com/sea-team/gofound/reindex"
 )
 
 func main() {
