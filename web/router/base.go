@@ -15,6 +15,5 @@ func InitBaseRouter(Router *gin.RouterGroup) {
 		BaseRouter.POST("query", controller.Query)
 		BaseRouter.GET("status", controller.Status)
 		BaseRouter.GET("gc", controller.GC)
-
 	}
 }

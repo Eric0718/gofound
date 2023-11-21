@@ -19,6 +19,7 @@ func Query(c *gin.Context) {
 		ResponseErrorWithMsg(c, err.Error())
 		return
 	}
+	//添加热度
 	//调用搜索
 	r, err := srv.Base.Query(request)
 	if err != nil {

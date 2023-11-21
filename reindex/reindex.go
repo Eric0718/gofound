@@ -33,7 +33,7 @@ var database = "default"
 func ScanTweetsTable() {
 	for {
 		time.Sleep(time.Minute * 2)
-		log.Println("ScanTweetsTable>>>>>>>>>")
+		log.Println("\nScanTweetsTable start>>>>>>>>>>")
 		session, err := NewSession()
 		if err != nil {
 			panic("nil mysql session")
@@ -58,12 +58,15 @@ func ScanTweetsTable() {
 
 			if res.State == 0 {
 				res.State = 1
-				res.UpdateAt = time.Now().Format("2006-01-02 15:04:05")
-				session.Where("id = ?", res.Id).Cols("state,update_at").Update(&res)
+			} else if res.State == 2 {
+				res.State = 3
 			}
+			res.UpdateAt = time.Now().Format("2006-01-02 15:04:05")
+			session.Where("id = ?", res.Id).Cols("state,update_at").Update(&res)
 		}
 		session.Commit()
 		session.Close()
+		log.Println("ScanTweetsTable end<<<<<<<<<<<<\n")
 	}
 }
 
@@ -91,6 +94,7 @@ func UpdateSearcherdb(ctx Tweets, option int, dbName string) error {
 		}
 	} else if option == 2 {
 		//url = RemoveUrl
+		log.Println("remove id====", ctx.Id)
 		rmd := &model.RemoveIndexModel{Id: uint32(ctx.Id)}
 		return srv.Index.RemoveIndex(dbName, rmd)
 	}
