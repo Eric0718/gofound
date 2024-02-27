@@ -1,4 +1,4 @@
-package reindex
+package global
 
 import (
 	"fmt"
@@ -10,9 +10,9 @@ import (
 
 var engine *xorm.Engine
 
-func init() {
-	u := "note"
-	p := "1234@note"
+func InitMysql() {
+	u := "notetet"
+	p := "note_1234"
 	url := "127.0.0.1"
 	dbname := "note"
 	port := "3306"
@@ -31,47 +31,30 @@ func init() {
 	}
 
 	engine = e
-
 	log.Println("connect db successfully!")
-
-	go ScanTweetsTable()
 }
 
-//获取db engine
+// 获取db engine
 func GetEngine() (*xorm.Engine, error) {
 	return engine, engine.Ping()
 }
 
-//创建session
+// 创建session
 func NewSession() (*xorm.Session, error) {
 	s := engine.NewSession()
 	return s, s.Begin()
 }
 
-//session提交
-func CommitAndClose(s *xorm.Session) error {
+// session提交
+func CommitAndClose(s *xorm.Session, err error) error {
 	if s == nil {
 		return fmt.Errorf("session nil!")
 	}
-
 	defer s.Close()
 
-	if err := s.Commit(); err != nil {
-		return err
+	if err != nil {
+		return s.Rollback()
+	} else {
+		return s.Commit()
 	}
-	return nil
-}
-
-//session回滚
-func RollBackAndClose(s *xorm.Session) error {
-	if s == nil {
-		return fmt.Errorf("session nil!")
-	}
-
-	defer s.Close()
-
-	if err := s.Rollback(); err != nil {
-		return err
-	}
-	return nil
 }

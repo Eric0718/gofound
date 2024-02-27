@@ -52,12 +52,13 @@ func Initialize() {
 
 	global.CONFIG = Parser()
 
+	global.InitMysql()
+
 	if !global.CONFIG.Debug {
 		log.SetOutput(os.Stdout) //将记录器的输出设置为os.Stdout
 	}
 
 	defer func() {
-
 		if r := recover(); r != nil {
 			fmt.Printf("panic: %s\n", r)
 		}
@@ -69,6 +70,9 @@ func Initialize() {
 
 	// 初始化业务逻辑
 	controller.NewServices()
+
+	//将最新的twit内容入库
+	go controller.ScanTweetsTable()
 
 	// 注册路由
 	r := router.SetupRouter()

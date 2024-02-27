@@ -3,9 +3,10 @@ package core
 import (
 	"flag"
 	"fmt"
-	"github.com/sea-team/gofound/global"
 	"os"
 	"runtime"
+
+	"github.com/sea-team/gofound/global"
 
 	"gopkg.in/yaml.v2"
 )

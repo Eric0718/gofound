@@ -1,6 +1,11 @@
 package controller
 
 import (
+	"log"
+
+	"github.com/sea-team/gofound/global"
+
+	"github.com/sea-team/gofound/note"
 	"github.com/sea-team/gofound/searcher/model"
 
 	"github.com/gin-gonic/gin"
@@ -19,7 +24,12 @@ func Query(c *gin.Context) {
 		ResponseErrorWithMsg(c, err.Error())
 		return
 	}
-	//添加热度
+
+	//添加搜索词热度
+	if err := note.InsertHotWords(request.Query); err != nil {
+		log.Println("InsertHotWords err:", err)
+	}
+
 	//调用搜索
 	r, err := srv.Base.Query(request)
 	if err != nil {
@@ -39,4 +49,15 @@ func GC(c *gin.Context) {
 func Status(c *gin.Context) {
 	r := srv.Base.Status()
 	ResponseSuccessWithData(c, r)
+}
+
+func GetHotWords(c *gin.Context) {
+	session, _ := global.NewSession()
+
+	hotwords := make([]global.HotWords, 0)
+
+	session.Where("created_at > ?", global.TodayMidnight().Format(global.TimeLayout)).
+		Desc("num").Limit(10, 0).Find(&hotwords)
+
+	ResponseSuccessWithData(c, hotwords)
 }
